@@ -1,0 +1,58 @@
+server:
+  port: 8080
+  sessionTimeout: 30
+  error:
+    path: /error
+spring:
+  main:
+    banner-mode: 'off'
+  profiles:
+    active: dev
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    #driverClass: com.mysql.jdbc.Driver
+    driverClass: com.microsoft.sqlserver.jdbc.SQLServerDriver
+    #url: jdbc:mysql://127.0.0.1:3306/prison?characterEncoding=UTF-8
+    url: jdbc:sqlserver://127.0.0.1:1433;DatabaseName=moldate_system20171207 
+    #url: jdbc:sqlserver://free.ngrok.cc:14940;DatabaseName=moldate_system20171207 
+    databaseName: null
+    serverName: null
+    username: sa
+    password: sa
+    initialSize: 5
+    minIdle: 5
+    maxActive: 20
+    maxWait: 60000
+    timeBetweenEvictionRunsMillis: 60000
+    validationQuery: SELECT 1 FROM DUAL
+    testWhileIdle: true
+    testOnBorrow: false
+    testOnReturn: false
+    poolPreparedStatements: true
+    maxPoolPreparedStatementPerConnectionSize: 20
+    filters: stat,wall,log4j
+    connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    password: null
+    pool:
+      max-idle: 8
+      min-idle: 0
+      max-active: 8
+      max-wait: -1
+  nio:
+    host: 127.0.0.1
+    port: 9888
+    ioThreadNum: 5
+    backlog: 1024
+  mvc:
+    view:
+      prefix: /webapp/static/
+      #suffix: .html
+  freemarker:
+    cache: false
+    content-type: text/html
+    request-context-attribute: request
+    template-loader-path: classpath:/templates
+    suffix: .ftl

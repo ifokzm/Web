@@ -1,0 +1,58 @@
+# SPRING CONFIG (ConfigFileApplicationListener) 
+spring.config.name= # config file name (default to 'application') spring.config.location= # location of config file  
+# PROFILES 
+spring.profiles.active= # comma list of active profiles 
+spring.profiles.include= # unconditionally activate the specified comma separated profiles  
+# APPLICATION SETTINGS (SpringApplication) spring.main.sources= 
+spring.main.web-environment= # detect by default spring.main.show-banner=true 
+spring.main....= # see class for all properties  
+# LOGGING 
+logging.path=/var/logs logging.file=myapp.log 
+logging.config= # location of config file (default classpath:logback.xml for logback) 
+logging.level.*= # levels for loggers, e.g. "logging.level.org.springframework=DEBUG" (TRACE, DEBUG, INFO, WARN, ERROR, FATAL, OFF)  
+# IDENTITY (ContextIdApplicationContextInitializer) 
+spring.application.name= spring.application.index= 
+
+#打包
+使用命令 mvn clean package 打包后，同一般J2EE项目一样部署到web容器。
+
+#运行
+关于一些数据库或其他第三方账户等信息，由于安全问题，其配置并不会提前配置在项目中暴露给开发人员。 
+对于这种情况，我们在运行程序的时候，可以通过参数指定一个外部配置文件。 
+java -jar demo.jar –spring.profiles.active=dev
+java -jar demo.jar --spring.config.location=/opt/config/application.properties
+
+
+创建一个Linux 应用的sh脚本
+
+下面几个脚本仅供参考，请根据自己需要做调整 
+--------------------------- start.sh --------------------------------
+
+#!/bin/sh  
+  
+rm -f tpid  
+  
+nohup java -jar /data/app/myapp.jar --spring.profiles.active=stg > /dev/null 2>&1 &  
+  
+echo $! > tpid  
+--------------------------- stop.sh ----------------------------------
+tpid=`cat tpid | awk '{print $1}'`  
+tpid=`ps -aef | grep $tpid | awk '{print $2}' |grep $tpid`  
+if [ ${tpid} ]; then  
+        kill -9 $tpid  
+fi  
+
+--------------------------- check.sh ----------------------------------
+#!/bin/sh  
+  
+tpid=`cat tpid | awk '{print $1}'`  
+tpid=`ps -aef | grep $tpid | awk '{print $2}' |grep $tpid`  
+if [ ${tpid} ]; then  
+        echo App is running.  
+else  
+        echo App is NOT running.  
+fi  
+--------------------------- kill.sh -----------------------------------
+#!/bin/sh  
+# kill -9 `ps -ef|grep 项目名称|awk '{print $2}'`  
+kill -9 `ps -ef|grep demo|awk 'NR==1 {print $2}'`
